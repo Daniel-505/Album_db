@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Álbumes</title>
+  </head>
+  <body>
+    <h1>Gestión de Álbumes</h1>
+    <form action="/" method="POST">
+      <input
+        type="text"
+        name="titulo"
+        placeholder="Título del álbum"
+        required
+      />
+      <input
+        type="number"
+        name="Año_lanzamiento"
+        placeholder="Año de lanzamiento"
+        required
+      />
+      <input type="text" name="genero" placeholder="Género" required />
+      <button type="submit">Agregar Álbum</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+
+    <h2>Álbumes</h2>
+    <ul>
+      {% for album in albums %}
+      <li>
+        <strong>{{ album.titulo }}</strong> ({{ album.Año_lanzamiento }}) - {{
+        album.genero }}
+        <a href="{{ url_for('editar_album', id_album=album.id_album) }}"
+          >Editar</a
+        >
+        <form
+          action="{{ url_for('eliminar_album', id_album=album.id_album) }}"
+          method="POST"
+          style="display: inline"
+        >
+          <button type="submit">Eliminar</button>
+        </form>
+        <a href="{{ url_for('gestionar_canciones', id_album=album.id_album) }}"
+          >Gestionar Canciones</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

@@ -233,5 +233,41 @@ def index():
     # Pasar los álbumes a la plantilla
     return render_template('db-albums.html', albums=albums)
 
+@app.route('/borar/int<int>', methods=['DELETE'])
+def borrar(id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute('DELETE FROM Albums WHERE id = %s', (id,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    flash('usuario eliminado correctamente')
+    return redirect(url_for('formulario'))
+
+@app.route('/editar/<int:id>', methods=['GET', 'POST'])
+def editar_usuario(id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
+        if not nombre or not email:
+            flash('Completa los campos.')
+            return redirect(url_for('editar_usuario', id=id))
+        cursor.execute('UPDATE usuario SET titulo = %s, Año_lanzamiento = %s, genero = %s WHERE id = %s', (nombre, email, id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        flash('Usuario actualizado correctamente.')
+        return redirect(url_for('formulario'))
+    
+    # Recuperar los datos del usuario a editar
+    cursor.execute('SELECT * FROM usuario WHERE id = %s', (id,))
+    usuario = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return render_template('editar.html', usuario=usuario)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
